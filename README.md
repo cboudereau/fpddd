@@ -147,6 +147,14 @@ type Color =
   | HSL of (uint * uint * uint)
 ```
 
+##### Special Cases: When to Allow Mutability
+
+This operation is simple as folding a list.
+
+In FP, mutation can be switched easily in a Monad to take the benefits of the performance and boundary (unit of work). This can be a line in a Http request or a char if your are building a json parser. That way when you fold the monoid (a zero and a binary operation) it is easy to keep track of the "pseudo mutation" aka context switching over a simple function.  
+
+For performance, it is nice to use a structure which mutes but can be use only for write or read operation and separating the process of writing and reading. That is the case with read readonly struct in dotnet, buffer management (circular buffer in a proxy, ...)
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
