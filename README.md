@@ -19,11 +19,11 @@ type Product =
   { Reference : Reference
     Qty : int
     Price : decimal }
-type ShoppingCart = 
+and ShoppingCart = 
   { Products : Product list }
-type Order = 
+and Order = 
   { Products : Product list
-    CreditCard : CreditCard }
+    CreditCard : CreditCart }
 and CreditCart = CreditCard of string
 and Reference = Reference of string
 ```
@@ -34,7 +34,7 @@ Sketing object can be made very easily with function signature aka Type Driven D
 By defining arrows and transformation to link one object of the domain to another one, the use of function feat really well with that practice
 
 ```fsharp
-type Validate = ShoppingCart -> CreditCard -> Order
+type Buy = ShoppingCart -> CreditCard -> Order
 ```
 
 #### Binding Model and Implementation
