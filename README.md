@@ -262,5 +262,9 @@ planning |> tryBookWithDependencies Room.Single (Rate 100m) (BookingReference 12
 planning |> tryBookWithDependencies Room.Double (Rate 100m) (BookingReference 123) = (Planning.empty, Some { Reference = BookingReference 123; Room = Double; Rate = Rate 100M })
 ```
 
+### Modeling Paradigms
+Here, it is well explained that the choice of OOP is purely related to old topics like performance, memory optimizations which are not true at the time of read. FP compilers/ gc like fsharp and Rust are better than the better OOP one. 
+For FP go for Domain Modelling Made Functional
+
 
 
