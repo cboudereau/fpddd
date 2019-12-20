@@ -102,7 +102,9 @@ optionalBuy buy (Some (CreditCard "40000000000000")) products = Some { Products 
 
 In this version, the order is made optional by composing the function with the CreditCard option in the optionalBuy higher order function. You bring that way dependency injection by adding the Buy function as parameter.
 
-Encoding association is made easy in FP
+Encoding association is made easy in FP.
+
+The main idea is that association are directly infered from the usage of the domain so that it avoid extra association that could come from a discussion of the model with the domain expert. This is a representation of association USED in the software.
 
 
 
