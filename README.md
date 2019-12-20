@@ -106,9 +106,20 @@ Encoding association is made easy in FP.
 
 The main idea is that association are directly infered from the usage of the domain so that it avoid extra association that could come from a discussion of the model with the domain expert. This is a representation of association USED in the software.
 
+#### ENTITIES (AKA REFERENCE OBJECTS)
+In FP, Entities are mapped directly to Record and Sum types.
+Identity and Equality in FP and DDD are important concept and the heart of the AGGREGATES. Sometimes identity and equality serves the same purpose but sometimes not. In FP referential transparency is a good tool to enhance the identiy and equality problems. 
 
+"An object defined primarily by its identity is called an "ENTITY""
 
-
+```fsharp
+type Customer = 
+    | Phone of Phone
+    | Email of Email
+    | PhoneAndEmail of (Phone * Email)
+and Phone = Phone of string
+and Email = Email of string
+```
 
 
 
