@@ -284,3 +284,8 @@ In finance, a closed is by the domain when the market is closed, in hospitality 
 
 Invariant are really important, thanks to property based testing, invariant/properties can be found quickly if needed. Thanks to pattern matching, finding invariant in depth is really helpull. Pattern matching is really mature in fsharp rather than in csharp.
 
+How to track and manage lifecycle objects dependencies ? Model consistency and well known associtions live togethers and die togethers.
+
+AGGREGATE Root : a seed/zero on the fold function. In accounting, it is the report of the previous closing.
+AGGREGATE Boundary : the end of the accounting year, the end of day in finance for trading or expiry for deals, when the client comes in hotel for bookings, ... The boundray can be small (hour/day) or large (years). Larger one can impact performance, this is why CQS/CQRS help a lot to treat those case. FP fit well on aggregate implementation
+
