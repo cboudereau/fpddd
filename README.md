@@ -47,5 +47,13 @@ The most important idea is having an explicit domain in the code helps developer
 
 Typing all the things help to separate the implementation from the design. Reviewing/challenging it thanks to the compiler helps a lot to see problems and take a decision quickly on the domain.
 
-## Part II. Building Bloc ks of a Mode l-Drive n Design
+## Part II. Building Bloc ks of a Model-Drive n Design
+
+Package -> Module
+Services -> Functions/Module
+Entities -> Record type
+Value objects -> type with deep equality (byu default in fsharp and for free)
+
+Aggregates : an aggregate is helpfull in a distributed system AKA CQS/CQRS when SPOF are centralized system and consensus accross different state with eventual consistency / CRDT / Compensation/ Consensus. In FP, an aggregates is basically the result of a fold function.
+
 
