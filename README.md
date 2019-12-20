@@ -112,6 +112,8 @@ Identity and Equality in FP and DDD are important concept and the heart of the A
 
 "An object defined primarily by its identity is called an "ENTITY""
 
+Having an identity or equality helps a lot to have idempotency (enhance software resilience)
+
 ```fsharp
 type Customer = 
     | Phone of Phone
