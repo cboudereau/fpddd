@@ -70,6 +70,7 @@ Interesting Point : Becarefull with SMART UI and frameworks that try to bring at
 
 In SMART UI, new comers must start by understanding the technical framework BEFORE understanding the domain. This is why it is considered as an antipattern from the DDD point of view.
 
+### A Model Expressed in Software
 
 
 
