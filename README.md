@@ -167,7 +167,7 @@ Services are implemented as interface in OOP but applied to SOLID principles, th
 ```fsharp
 //DDD Services
 type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
-type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
+type DecrementPlanning = DecrementPlanning of (RoomAvailability -> Rate -> Planning -> Planning option) 
 ```
 
 #### Personal Notes
@@ -202,14 +202,14 @@ and RoomQuantity =
 
 //DDD Services
 type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
-type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
+type DecrementPlanning = DecrementPlanning of (RoomAvailability -> Rate -> Planning -> Planning option) 
 
 //Implementation : separate Domain model from Implementation
 //DDD Package/Module
 module Planning = 
     let empty = Planning Map.empty
     let tryDecrement = 
-        PlanningTransaction <| fun roomAvailbility rate (Planning planning) -> 
+        DecrementPlanning <| fun roomAvailbility rate (Planning planning) -> 
             let identity = roomAvailbility.Room, rate
             planning 
             |> Map.tryFind identity
@@ -223,7 +223,7 @@ module Planning =
 // DDD Package/Module
 module Booking = 
     //Function to compose Services together with higer order function composition
-    let tryBook (PlanningTransaction planningTransaction) = 
+    let tryBook (DecrementPlanning planningTransaction) = 
         TryBook <| fun bookingRoom bookingRate bookingReference planning ->
             let bookingRoomAvail = { Room=bookingRoom; Quantity = RoomQuantity.One}
             let booking  = { Reference=bookingReference; Room=bookingRoom; Rate=bookingRate }
