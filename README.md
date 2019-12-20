@@ -41,5 +41,7 @@ type Buy = ShoppingCart -> CreditCard -> Order
 
 #### Binding Model and Implementation
 ##### MODEL-DRIVEN DESIGN
+FP is better than OOP on that field which not hide state inside object. The state is represented outside functions. That way functions becomes simple transition from one state to another one and follow the same rules of the Documents and Diagrams part.
 
+The most important idea is having an explicit domain in the code helps developer and new comers understanding as quick as possible and with the maximum domain fidelity.
 
