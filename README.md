@@ -123,5 +123,72 @@ and Phone = Phone of string
 and Email = Email of string
 ```
 
+Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
+```fsharp
+//Booking is an Entity because it is important to treat it only once to managmeent hotel availabilities
+type Booking = 
+    { Reference : BookingReference
+      Room : Room
+      Rate : Rate }
+and Room = Double | Single
+and Rate = Rate of decimal
+and BookingReference = BookingReference of int
+and Availability = Availability of int
+//Here RoomAvailability is a Value object because only quantity is important.
+and RoomAvailability = 
+    { Room : Room
+      Quantity : RoomQuantity }
+and Planning = Planning of Map<(Room * Rate), RoomQuantity>
+//Ubiquituous Language : avoid primitive obsession in favour of domain word.
+and RoomQuantity = 
+    | RoomQuantity of int
+    with 
+        //Arithmetic operations inside the domain
+        static member (-) (RoomQuantity x, RoomQuantity y) = RoomQuantity (x - y)  
+        static member (+) (RoomQuantity x, RoomQuantity y) = RoomQuantity (x + y)  
+        static member Zero = RoomQuantity 0
+        static member One = RoomQuantity 1
+
+//Planning Service
+type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
+type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
+
+module Planning = 
+    let empty = Planning Map.empty
+    let tryDecrement = 
+        PlanningTransaction <| fun roomAvailbility rate (Planning planning) -> 
+            let identity = roomAvailbility.Room, rate
+            planning 
+            |> Map.tryFind identity
+            |> Option.bind (fun roomQuantity ->
+                match roomQuantity - roomAvailbility.Quantity with
+                | RoomQuantity 0 -> planning |> Map.remove identity |> Planning |> Some
+                | update when update > RoomQuantity.Zero -> planning |> Map.add identity update |> Planning |> Some
+                | _ -> None
+                | roomQuantity when roomQuantity - roomAvailbility.Quantity >= RoomQuantity.Zero -> None)
+
+//Function to compose Services together with higer order function composition
+let tryBook (PlanningTransaction planningTransaction) = 
+    TryBook <| fun bookingRoom bookingRate bookingReference planning ->
+        let bookingRoomAvail = { Room=bookingRoom; Quantity = RoomQuantity.One}
+        let booking  = { Reference=bookingReference; Room=bookingRoom; Rate=bookingRate }
+        planning
+        |> planningTransaction bookingRoomAvail bookingRate
+        |> Option.map (fun updatedPlanning -> updatedPlanning, Some booking)
+        |> Option.defaultValue (planning, None) 
+
+
+let planning = [ (Room.Double, Rate 100m), RoomQuantity 1 ] |> Map.ofList |> Planning
+
+let (TryBook tryBookWithDependencies) = tryBook Planning.tryDecrement
+
+//Bad price
+planning |> tryBookWithDependencies Room.Double (Rate 120m) (BookingReference 123) = (planning, None)
+//Bad room
+planning |> tryBookWithDependencies Room.Single (Rate 100m) (BookingReference 123) = (planning, None)
+//Sounds good!
+planning |> tryBookWithDependencies Room.Double (Rate 100m) (BookingReference 123) = (Planning.empty, Some { Reference = BookingReference 123; Room = Double; Rate = Rate 100M })
+```
+
 
 
