@@ -19,12 +19,11 @@ type Product =
   { Reference : Reference
     Qty : int
     Price : decimal }
-and ShoppingCart = 
-  { Products : Product list }
+and ShoppingCart = ShoppingCart of Product list
 and Order = 
   { Products : Product list
-    CreditCard : CreditCart }
-and CreditCart = CreditCard of string
+    CreditCard : CreditCard }
+and CreditCard = CreditCard of string
 and Reference = Reference of string
 ```
 
@@ -71,6 +70,42 @@ Interesting Point : Becarefull with SMART UI and frameworks that try to bring at
 In SMART UI, new comers must start by understanding the technical framework BEFORE understanding the domain. This is why it is considered as an antipattern from the DDD point of view.
 
 ### A Model Expressed in Software
+#### Associations
+Associations are function signature like the Buy associate a SchoppingCart and a CreditCard number. The function signature brings also cardinality in the domain.
+
+```fsharp
+type Buy = Buy of (ShoppingCart -> CreditCard -> Order)
+```
+
+In this version, it is easy to identify cardinality and relationship between objects.
+
+```fsharp
+type Buy = Buy of (ShoppingCart -> CreditCard option -> Order option)
+```
+
+A higher order function/ function composition can help quickly to transform the first one version to the second one by having for example a full Buy option:
+
+```fsharp
+let buy = Buy <| fun (ShoppingCart products) creditCard -> { Products=products; CreditCard=creditCard }
+
+let optionalBuy (Buy buy) creditCard shoppingCart = creditCard |> Option.map (buy shoppingCart)
+
+let products = 
+    ShoppingCart <| 
+        [ { Price=100m
+            Qty = 1
+            Reference = Reference "ABC123"} ]
+
+optionalBuy buy None products = None
+optionalBuy buy (Some (CreditCard "40000000000000")) products = Some { Products = [{ Reference = Reference "ABC123"; Qty = 1; Price = 100M }]; CreditCard = CreditCard "40000000000000" }
+```
+
+In this version, the order is made optional by composing the function with the CreditCard option in the optionalBuy higher order function. You bring that way dependency injection by adding the Buy function as parameter.
+
+Encoding association is made easy in FP
+
+
+
 
 
 
