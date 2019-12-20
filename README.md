@@ -172,6 +172,8 @@ type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Plann
 type DecrementPlanning = DecrementPlanning of (RoomAvailability -> Rate -> Planning -> Planning option) 
 ```
 
+Stateless operation : in FP states are managed through unit of work and traversable types likes Monads. That way a type is responsible to manage the state and map a function to transform each values. In/Out monads are very usefull to work with bounded process (like http request/response life cycle, database operations, ...)
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
