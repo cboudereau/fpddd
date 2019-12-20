@@ -159,6 +159,17 @@ Actor model helps a lot to mute the state inside an actor instance and send noti
 
 A good example : channel vs multithreading
 
+#### SERVICES
+
+"Manager" anti-pattern, in FP services can combine services together of simply be a function.
+Services are implemented as interface in OOP but applied to SOLID principles, those interfaces can become anemic, this is why in FP the unit of work for a service is a function defined in a type like this one : 
+
+```fsharp
+//DDD Services
+type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
+type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
+```
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
