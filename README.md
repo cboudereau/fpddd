@@ -288,3 +288,55 @@ How to track and manage lifecycle objects dependencies ? Model consistency and w
 
 AGGREGATE Root : a seed/zero on the fold function. In accounting, it is the report of the previous closing.
 AGGREGATE Boundary : the end of the accounting year, the end of day in finance for trading or expiry for deals, when the client comes in hotel for bookings, ... The boundray can be small (hour/day) or large (years). Larger one can impact performance, this is why CQS/CQRS help a lot to treat those case. FP fit well on aggregate implementation with Monoid where : mappend is a binary operation to combine seed/zero/mempty and the ENTITY to another VALUE OBJECT or ENTITY.
+
+#### Model a Purchase Order System
+Here is the fsharp implementation in DDD way : 
+```fsharp
+//Type is the Aggregate root
+type PurchaseOrder = 
+    { PurchaseOrderNumber:PurchaseOrderNumber
+      ApprovedLimit:ApprovedLimit
+      PurchaseOrderLineItems:PurchaseOrderLineItem list }
+//and are underlying ENTITIES or VALUE OBJECTS
+and PurchaseOrderNumber = PurchaseOrderNumber of int
+and PurchaseOrderLineItem = { Quantity:int; Part:Part }
+and Part = Part of Money
+and ApprovedLimit = ApprovedLimit of Money
+     
+and Money = 
+    | Money of decimal
+    static member (+) (Money x, Money y) = Money (x + y)
+    static member Zero = Money 0m
+    static member (*) (Money x, qty:int) = Money (decimal qty * x)
+
+//DDD Service
+type AddItem = AddItem of (PurchaseOrderLineItem -> PurchaseOrder -> PurchaseOrder option)
+
+//Implementation
+module PurchaseOrder = 
+    let zero number approvedLimit = { PurchaseOrderNumber=number; ApprovedLimit=approvedLimit; PurchaseOrderLineItems=[] } 
+    
+    module ApprovedLimit = 
+        let toMoney (ApprovedLimit money) = money
+
+    module PurchaseOrderLineItem = 
+        let amount p = let (Part money) = p.Part in money * p.Quantity
+
+    let tryAdd = 
+        AddItem <| fun item order ->
+            let items = item :: order.PurchaseOrderLineItems
+            let total =  items |> List.sumBy PurchaseOrderLineItem.amount
+            
+            match order.ApprovedLimit with
+            | (ApprovedLimit limit) when total > limit -> None
+            | _ -> { order with PurchaseOrderLineItems = items } |> Some
+
+//Composition root
+let (AddItem addItem) = PurchaseOrder.tryAdd
+
+//Sandbox
+let order = PurchaseOrder.zero (PurchaseOrderNumber 123) (ApprovedLimit (Money 100m))
+let part = { Quantity=1; Part=Part (Money 100m) }
+order |> addItem part = Some ({order with PurchaseOrderLineItems=[part]})
+order |> addItem { part with Quantity=2 } = None
+```
