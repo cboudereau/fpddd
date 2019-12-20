@@ -162,7 +162,9 @@ A good example : channel vs multithreading
 #### SERVICES
 
 "Manager" anti-pattern, in FP services can combine services together of simply be a function.
-Services are implemented as interface in OOP but applied to SOLID principles, those interfaces can become anemic, this is why in FP the unit of work for a service is a function defined in a type like this one : 
+Services are implemented as interface in OOP but applied to SOLID principles, those interfaces can become anemic, this is why in FP the unit of work for a service is a function defined in a type like this one (always a "verb" rather than a "noun") : 
+
+In FP, this definition can be in one file which contains the full domain model of the application separated with modules.
 
 ```fsharp
 //DDD Services
