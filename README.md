@@ -124,7 +124,7 @@ and Email = Email of string
 ```
 
 #### VALUE OBJECTS
-
+Very interesting point there : puting identity everywhere can hurt the system performance (IE : dependency injection framework where everything is an instance of a class). In most cases value objects can be a struct but when struct is a graph, list or a big datastructure, it is difficult to copy it all time. Thanks to record types, struct and ref readonly on dotnet core it is pretty easy to get value objects even if they are bigs.
 
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
