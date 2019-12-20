@@ -50,16 +50,20 @@ Typing all the things help to separate the implementation from the design. Revie
 ## Part II. Building Bloc ks of a Model-Drive n Design
 
 Package -> Module
-Services -> Functions/Module
+Services -> Functions
 Entities -> Record type
-Value objects -> type with deep equality (byu default in fsharp and for free)
+Value objects -> Type (with deep equality by default in fsharp and for free)
 
 Aggregates : an aggregate is helpfull in a distributed system AKA CQS/CQRS when SPOF are centralized system and consensus accross different state with eventual consistency / CRDT / Compensation/ Consensus. In FP, an aggregates is basically the result of a fold function.
 
 ### Isolating the Domain
 #### LAYERED ARCHITECTURE
-Decoupling domain objects and other function is called function composition in FP. The aim is to split the function in smaller one and construct the result by composing them with combinators.
+Decoupling domain objects and other function is called function composition in FP. The aim is to split the function in smaller one and construct the result by composing them with higher order functions (combinators, monads, ...). This is a more intuitive usage of Onion or Hexagonal Architecture
 
 The layered architecture separates in fact model representation from model domain (In the Weather app, the UI is culture dependant and adptation has to be done to convert unit of measure) : https://github.com/cboudereau/fabulous-weather
+
+
+
+
 
 
