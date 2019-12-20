@@ -125,6 +125,7 @@ and Email = Email of string
 
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
+//// Domain Model
 //Booking is an Entity because it is important to treat it only once to managmeent hotel availabilities
 type Booking = 
     { Reference : BookingReference
@@ -155,6 +156,7 @@ and RoomQuantity =
 type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
 type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
 
+//Implementation : separate Domain model from Implementation
 //DDD Package/Module
 module Planning = 
     let empty = Planning Map.empty
