@@ -128,6 +128,25 @@ Very interesting point there : puting identity everywhere can hurt the system pe
 
 For example, a banking transaction is an ENTITY but the amouunt in Money type is a value type represented as a record type or struct in FP.
 
+In OOP value objects are mostly represented with primitives or enum which is a bad practice. Instead, a sum type is used in FP to represent the value object of the domain. For example, if the color is static :
+
+Dependending the domain the identity can be relevant or not. For example in geo address identifier is important but not in the case of eCommerce site. For an autocomplete service, it is use full to transform the address from a value object to a selected address entity. That way it is really easy to index data with by address identity.
+
+Value object are immutable which is by default in fsharp but not in csharp.
+
+Another important part for VALUE OBJECTS, they can be used to send a message. This kind of architecture transform a continuous time to a discrete time which is better to have for resilience in long running process.
+
+```fsharp
+type Color = Blue | Green
+```
+
+But if the color is Dynamic and can be represented is different format :
+```fsharp
+type Color = 
+  | Hexa of int
+  | HSL of (uint * uint * uint)
+```
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
