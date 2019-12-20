@@ -14,8 +14,30 @@ The best of optimization (in term of performance) is not the technical one but a
 
 The model is very important, that is why in FP, we have a file which contains the full domain of the app. That way, it is simpler to discover/navigate and discuss.
 
+```fsharp
+type Product = 
+  { Reference : Reference
+    Qty : int
+    Price : decimal }
+type ShoppingCart = 
+  { Products : Product list }
+type Order = 
+  { Products : Product list
+    CreditCard : CreditCard }
+and CreditCart = CreditCard of string
+and Reference = Reference of string
+```
+
 #### Documents and Diagrams
+
+Sketing object can be made very easily with function signature aka Type Driven Development.
+By defining arrows and transformation to link one object of the domain to another one, the use of function feat really well with that practice
+
+```fsharp
+type Validate = ShoppingCart -> CreditCard -> Order
+```
 
 #### Binding Model and Implementation
 ##### MODEL-DRIVEN DESIGN
+
 
