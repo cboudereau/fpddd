@@ -176,6 +176,10 @@ Stateless operation : in FP states are managed through unit of work and traversa
 
 Service are partitionated in : Application, Domain, Infrastructure. Thoses layers can be defined as internal inside a module and a service can exposed and hide some specific domain details which is not core domain but important to structure
 
+Application : messaging handling message and notification
+Domain : types specific for the Service domain (core service functions)
+Infrastructure : send emails, edge of the Hexagon (in Haxagonal architecture)
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
