@@ -33,6 +33,8 @@ and Reference = Reference of string
 Sketing object can be made very easily with function signature aka Type Driven Development.
 By defining arrows and transformation to link one object of the domain to another one, the use of function feat really well with that practice
 
+fsi files in fsharp is a good place to do this activity.
+
 ```fsharp
 type Buy = ShoppingCart -> CreditCard -> Order
 ```
