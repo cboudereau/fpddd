@@ -123,6 +123,10 @@ and Phone = Phone of string
 and Email = Email of string
 ```
 
+#### VALUE OBJECTS
+
+
+#### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
 //// Domain Model
