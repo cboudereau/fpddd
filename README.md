@@ -155,6 +155,10 @@ In FP, mutation can be switched easily in a Monad to take the benefits of the pe
 
 For performance, it is nice to use a structure which mutes but can be use only for write or read operation and separating the process of writing and reading. That is the case with read readonly struct in dotnet, buffer management (circular buffer in a proxy, ...)
 
+Actor model helps a lot to mute the state inside an actor instance and send notification when the state changed. If a value mutes then it must not be shared. If the value is shared, deadlock or awaiting process are hard to optimize. A message passing approach can bring real performance and parallelization for free and avoid bottlenecks. 
+
+A good example : channel vs multithreading
+
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
 ```fsharp
