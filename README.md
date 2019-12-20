@@ -266,5 +266,10 @@ planning |> tryBookWithDependencies Room.Double (Rate 100m) (BookingReference 12
 Here, it is well explained that the choice of OOP is purely related to old topics like performance, memory optimizations which are not true at the time of read. FP compilers/ gc like fsharp and Rust are better than the better OOP one. 
 For FP go for Domain Modelling Made Functional
 
+#### Non-objects in an Object World 
+Eric Evans sites Prolog which is a Logic programming language. Functional programming and Logic programming are closed to formal/ mathematic legacy. What about OOP ? It is purely created as part as an old state mangement optimization which does not really make senses in DDD.
+
+### The Lifecycle of a Domain Object
+
 
 
