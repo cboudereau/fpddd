@@ -305,6 +305,7 @@ and ApprovedLimit = ApprovedLimit of Money
      
 and Money = 
     | Money of decimal
+    //Arithmetic operations inside the domain
     static member (+) (Money x, Money y) = Money (x + y)
     static member Zero = Money 0m
     static member (*) (Money x, qty:int) = Money (decimal qty * x)
@@ -337,6 +338,8 @@ let (AddItem addItem) = PurchaseOrder.tryAdd
 //Sandbox
 let order = PurchaseOrder.zero (PurchaseOrderNumber 123) (ApprovedLimit (Money 100m))
 let part = { Quantity=1; Part=Part (Money 100m) }
+
+//Assertions
 order |> addItem part = Some ({order with PurchaseOrderLineItems=[part]})
 order |> addItem { part with Quantity=2 } = None
 ```
