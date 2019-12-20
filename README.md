@@ -60,10 +60,12 @@ Aggregates : an aggregate is helpfull in a distributed system AKA CQS/CQRS when 
 #### LAYERED ARCHITECTURE
 Decoupling domain objects and other function is called function composition in FP. The aim is to split the function in smaller one and construct the result by composing them with higher order functions (combinators, monads, ...). This is a more intuitive usage of Onion or Hexagonal Architecture
 
+#### The Domain Layer is Where the Model Lives
 The layered architecture separates in fact model representation from model domain (In the Weather app, the UI is culture/UI Framework dependent and adptation has to be done to convert unit of measure) : https://github.com/cboudereau/fabulous-weather.
 
 By adding conversion modules and model to views functions, the domain model is projected to the culture and interface of the user.
 
+#### SMART UI ANTI-PATTERN
 Interesting Point : Becarefull with SMART UI and frameworks that try to bring at the same time technical abstraction with inheritance and an existing layer. This is considered an anti pattern because the domain is dependent of the technical details. In FP, function does not impact dependencies, functions are just arrows to transform domain object to framework UI/Api objects. That way the domain is not dependent of the ui/web framework.
 
 In SMART UI, new comers must start by understanding the technical framework BEFORE understanding the domain. This is why it is considered as an antipattern from the DDD point of view.
