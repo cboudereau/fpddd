@@ -287,5 +287,4 @@ Invariant are really important, thanks to property based testing, invariant/prop
 How to track and manage lifecycle objects dependencies ? Model consistency and well known associtions live togethers and die togethers.
 
 AGGREGATE Root : a seed/zero on the fold function. In accounting, it is the report of the previous closing.
-AGGREGATE Boundary : the end of the accounting year, the end of day in finance for trading or expiry for deals, when the client comes in hotel for bookings, ... The boundray can be small (hour/day) or large (years). Larger one can impact performance, this is why CQS/CQRS help a lot to treat those case. FP fit well on aggregate implementation
-
+AGGREGATE Boundary : the end of the accounting year, the end of day in finance for trading or expiry for deals, when the client comes in hotel for bookings, ... The boundray can be small (hour/day) or large (years). Larger one can impact performance, this is why CQS/CQRS help a lot to treat those case. FP fit well on aggregate implementation with Monoid where : mappend is a binary operation to combine seed/zero/mempty and the ENTITY to another VALUE OBJECT or ENTITY.
