@@ -138,6 +138,7 @@ and Availability = Availability of int
 and RoomAvailability = 
     { Room : Room
       Quantity : RoomQuantity }
+// DDD ASSOCIATIONS
 and Planning = Planning of Map<(Room * Rate), RoomQuantity>
 //Ubiquituous Language : avoid primitive obsession in favour of domain word.
 and RoomQuantity = 
@@ -149,7 +150,7 @@ and RoomQuantity =
         static member Zero = RoomQuantity 0
         static member One = RoomQuantity 1
 
-//Planning Service
+//DDD Services
 type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
 type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
 
