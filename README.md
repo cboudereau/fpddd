@@ -183,6 +183,9 @@ Infrastructure : send emails, edge of the Hexagon (in Haxagonal architecture)
 Services map well with the Top-Down Agile patterns
 
 #### MODULES (AKA PACKAGES)
+Modules are concepts and used for Low coupling and high cohesion and brind consistency in an atomic concept.
+MODULES are a communications mechanism.
+In fsharp, module and all kind of declaration is dependent of their order. That mean putting at the end technical modules to not referenced them into domain modules. Only the composition root of the program bind technical/infra with domain
 
 #### Personal Notes
 Here is a full version of the ENTITIES, SERVICE and VALUE OBJECT usage
@@ -206,7 +209,7 @@ and RoomAvailability =
 and Planning = Planning of Map<(Room * Rate), RoomQuantity>
 //Ubiquituous Language : avoid primitive obsession in favour of domain word.
 and RoomQuantity = 
-    | RoomQuantity of int
+    | RoomQuantity of intùm!
     with 
         //Arithmetic operations inside the domain
         static member (-) (RoomQuantity x, RoomQuantity y) = RoomQuantity (x - y)  
