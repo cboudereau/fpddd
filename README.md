@@ -130,6 +130,7 @@ type Booking =
     { Reference : BookingReference
       Room : Room
       Rate : Rate }
+// Value objects
 and Room = Double | Single
 and Rate = Rate of decimal
 and BookingReference = BookingReference of int
@@ -154,6 +155,7 @@ and RoomQuantity =
 type TryBook = TryBook of (Room -> Rate -> BookingReference -> Planning -> Planning * Booking option)
 type PlanningTransaction = PlanningTransaction of (RoomAvailability -> Rate -> Planning -> Planning option) 
 
+//DDD Package/Module
 module Planning = 
     let empty = Planning Map.empty
     let tryDecrement = 
@@ -168,21 +170,23 @@ module Planning =
                 | _ -> None
                 | roomQuantity when roomQuantity - roomAvailbility.Quantity >= RoomQuantity.Zero -> None)
 
-//Function to compose Services together with higer order function composition
-let tryBook (PlanningTransaction planningTransaction) = 
-    TryBook <| fun bookingRoom bookingRate bookingReference planning ->
-        let bookingRoomAvail = { Room=bookingRoom; Quantity = RoomQuantity.One}
-        let booking  = { Reference=bookingReference; Room=bookingRoom; Rate=bookingRate }
-        planning
-        |> planningTransaction bookingRoomAvail bookingRate
-        |> Option.map (fun updatedPlanning -> updatedPlanning, Some booking)
-        |> Option.defaultValue (planning, None) 
+// DDD Package/Module
+module Booking = 
+    //Function to compose Services together with higer order function composition
+    let tryBook (PlanningTransaction planningTransaction) = 
+        TryBook <| fun bookingRoom bookingRate bookingReference planning ->
+            let bookingRoomAvail = { Room=bookingRoom; Quantity = RoomQuantity.One}
+            let booking  = { Reference=bookingReference; Room=bookingRoom; Rate=bookingRate }
+            planning
+            |> planningTransaction bookingRoomAvail bookingRate
+            |> Option.map (fun updatedPlanning -> updatedPlanning, Some booking)
+            |> Option.defaultValue (planning, None) 
 
+//Composition root (root of the app)
+let (TryBook tryBookWithDependencies) = Booking.tryBook Planning.tryDecrement
 
+// Sandbox and Assertions
 let planning = [ (Room.Double, Rate 100m), RoomQuantity 1 ] |> Map.ofList |> Planning
-
-let (TryBook tryBookWithDependencies) = tryBook Planning.tryDecrement
-
 //Bad price
 planning |> tryBookWithDependencies Room.Double (Rate 120m) (BookingReference 123) = (planning, None)
 //Bad room
