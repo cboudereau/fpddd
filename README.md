@@ -280,3 +280,7 @@ Modeling AGGREGATES and adding FACTORIES and REPOSITORIES to the design gives us
 
 In finance, a closed is by the domain when the market is closed, in hospitality industry a booking ends when the client come at hotel, .... This kind of expiration are very important in DDD
 
+"It is difficult to guarantee the consistency of changes to objects in a model with complex associations. Invariants need to be maintained that apply to closely related groups of objects, not just discrete objects. Yet cautious locking schemes cause multiple users to interfere pointlessly with each other and make a system unusable."
+
+Invariant are really important, thanks to property based testing, invariant/properties can be found quickly if needed. Thanks to pattern matching, finding invariant in depth is really helpull. Pattern matching is really mature in fsharp rather than in csharp.
+
