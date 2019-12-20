@@ -46,7 +46,7 @@ The most important idea is having an explicit domain in the code helps developer
 
 Typing all the things help to separate the implementation from the design. Reviewing/challenging it thanks to the compiler helps a lot to see problems and take a decision quickly on the domain.
 
-## Part II. Building Bloc ks of a Model-Drive n Design
+## Part II. Building Blocks of a Model-Drive n Design
 
 Package -> Module
 Services -> Functions
