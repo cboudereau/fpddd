@@ -1,6 +1,6 @@
 # fpddd
 
-## Putting the Domain Model to Work
+## Part I. Putting the Domain Model to Work
 
 ### Communication and the Use of Language
 #### UBIQUITOUS LANGUAGE
@@ -46,4 +46,6 @@ FP is better than OOP on that field which not hide state inside object. The stat
 The most important idea is having an explicit domain in the code helps developer and new comers understanding as quick as possible and with the maximum domain fidelity.
 
 Typing all the things help to separate the implementation from the design. Reviewing/challenging it thanks to the compiler helps a lot to see problems and take a decision quickly on the domain.
+
+## Part II. Building Bloc ks of a Mode l-Drive n Design
 
