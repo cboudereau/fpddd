@@ -480,6 +480,7 @@ This part does not explain how to implement invariant checks in constructor or f
 #### REPOSITORIES
 Document store instead of full database model, this is the purpose of CQS, put a document for read operation updated by applying updates by queuing updates in an eventual consistency way. Write operations are centralized in a DB for example. Read store can be build from scratch from the write model. 2 aggregates one for read operation and another for write operations. The read aggregates can be rebuild from the write one but not the opposite.
 
+#### Designing Objects for Relational Databases
 METADATA MAPPING LAYERS : optics/lens is FP is the pattern for that.
 
 In that parts, ORM are not the one to treat all kind of problems like aggregation. The best way is to use simple tools like type providers whithout the need of a global technical solution for all repositories. Performance and Space are a good reasons to take care of that kind of problems. Why using full structures if only the count is used ? This is is kind of question that the dev should focus first on the domain before the solution.
