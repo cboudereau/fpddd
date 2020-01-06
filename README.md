@@ -343,3 +343,8 @@ let part = { Quantity=1; Part=Part (Money 100m) }
 order |> addItem part = Some ({order with PurchaseOrderLineItems=[part]})
 order |> addItem { part with Quantity=2 } = None
 ```
+
+Locking an object is now an antipattern causing deadlock and performance problems. Turn the lock into an intention : a command or a notification and handle the message to manage the aggregate by queuing messages without using lock systems. If the message is splitable, separates aggregates like the booking count and room stock for a hotel booking engine app.
+
+Invariant can be encoded to function returning option or result value which indicates the reason.
+
