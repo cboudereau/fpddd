@@ -4,13 +4,13 @@
 
 ### Communication and the Use of Language
 #### UBIQUITOUS LANGUAGE
-Ubiquitus Language mean at the same time one world with an associated définition to avoid synonym or packing all specifities in the same word. 
+Ubiquitus Language means at the same time one world with an associated définition to avoid synonym or packing all specifities in the same word. 
 
 Your language can bring a lot of technical details like technical keyword and so on. It is very important at the design time to choose a language with the less keyword. This is call Consiveness of the language. With XP and a consive lang, the communication through the code is very good. 
 
 That way it is possible to create a discussion between the domain expert and the dev team with a code file as media by challenging functions and vocabulary to precise and add high domain fidelity.
 
-The best of optimization (in term of performance) is not the technical one but always the one which starts from a consensus betwaeen dev and domain expert. Ex : temporal, domain compression by applying values on the same interval is really better than the naive solution consisting to send request as day basis.
+The best of optimization (in term of performance) is not the technical one but always the one which starts from a consensus between dev and domain expert. Ex : temporal, domain compression by applying values on the same interval is really better than the naive solution consisting to send request as day basis.
 
 The model is very important, that is why in FP, we have a file which contains the full domain of the app. That way, it is simpler to discover/navigate and discuss.
 
@@ -44,7 +44,7 @@ FP is better than OOP on that field which not hide state inside object. The stat
 
 The most important idea is having an explicit domain in the code helps developer and new comers understanding as quick as possible and with the maximum domain fidelity.
 
-Typing all the things help to separate the implementation from the design. Reviewing/challenging it thanks to the compiler helps a lot to see problems and take a decision quickly on the domain.
+Typing all the things helps to separate the implementation from the design. Reviewing/challenging it thanks to the compiler helps a lot to see problems and take a decision quickly on the domain.
 
 ## Part II. Building Blocks of a Model-Drive n Design
 
@@ -60,7 +60,7 @@ Aggregates : an aggregate is helpfull in a distributed system AKA CQS/CQRS when 
 Decoupling domain objects and other function is called function composition in FP. The aim is to split the function in smaller one and construct the result by composing them with higher order functions (combinators, monads, ...). This is a more intuitive usage of Onion or Hexagonal Architecture
 
 #### The Domain Layer is Where the Model Lives
-The layered architecture separates in fact model representation from model domain (In the Weather app, the UI is culture/UI Framework dependent and adptation has to be done to convert unit of measure) : https://github.com/cboudereau/fabulous-weather.
+The layered architecture separates in fact model representation from model domain (In the Weather app, the UI is culture/UI Framework dependent and adaptation has to be done to convert unit of measure) : https://github.com/cboudereau/fabulous-weather.
 
 By adding conversion modules and model to views functions, the domain model is projected to the culture and interface of the user.
 
@@ -130,15 +130,15 @@ For example, a banking transaction is an ENTITY but the amouunt in Money type is
 
 In OOP value objects are mostly represented with primitives or enum which is a bad practice. Instead, a sum type is used in FP to represent the value object of the domain. For example, if the color is static :
 
+```fsharp
+type Color = Blue | Green
+```
+
 Dependending the domain the identity can be relevant or not. For example in geo address identifier is important but not in the case of eCommerce site. For an autocomplete service, it is use full to transform the address from a value object to a selected address entity. That way it is really easy to index data with by address identity.
 
 Value object are immutable which is by default in fsharp but not in csharp.
 
 Another important part for VALUE OBJECTS, they can be used to send a message. This kind of architecture transform a continuous time to a discrete time which is better to have for resilience in long running process.
-
-```fsharp
-type Color = Blue | Green
-```
 
 But if the color is Dynamic and can be represented is different format :
 ```fsharp
