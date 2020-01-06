@@ -489,4 +489,6 @@ In that part, caching technique is discussed, CQS is a kind of caching by taking
 
 ###  Using the Language in an Example: A Cargo Shipping System
 
+Organize code by domain/boundary not by pattern like MVC...
+
 ## Part III. Refactoring Toward Deeper Insight
