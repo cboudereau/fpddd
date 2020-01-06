@@ -470,3 +470,13 @@ let purchaseOrderTransaction = statefullUpdate initialOrder
 ```
 
 #### FACTORIES
+
+Bring invariant into a struct/object creation. In FP this is called making illegal states unrepresentable. Builder in OOP is really hard to implement as the number of invariant increase. Instead in FP, the railway oriented programming helps a lot to implement factory without builder problems.
+
+Operations should be atomic even if it is eventual consistent
+
+This part does not explain how to implement invariant checks in constructor or factories. In constructor, when invariant is not meet, an exception is used. Exception is a lie on a method signature and it is harder to catch deep one (ie: Java exception runtime handling...). Another way is to use sum type like option or result one in a function as a factory. In OOP, builders are used for that but there the code can be messy as the aggregate structure is complex.
+
+#### REPOSITORIES
+
+
