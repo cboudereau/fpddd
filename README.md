@@ -289,7 +289,10 @@ How to track and manage lifecycle objects dependencies ? Model consistency and w
 AGGREGATE Root : a seed/zero on the fold function. In accounting, it is the report of the previous closing.
 AGGREGATE Boundary : the end of the accounting year, the end of day in finance for trading or expiry for deals, when the client comes in hotel for bookings, ... The boundray can be small (hour/day) or large (years). Larger one can impact performance, this is why CQS/CQRS help a lot to treat those case. FP fit well on aggregate implementation with Monoid where : mappend is a binary operation to combine seed/zero/mempty and the ENTITY to another VALUE OBJECT or ENTITY.
 
-#### Model a Purchase Order System
+
+#### AGGREGATES
+
+##### Model a Purchase Order System
 Here is the fsharp implementation in DDD way : 
 ```fsharp
 //Type is the Aggregate root
@@ -348,3 +351,4 @@ Locking an object is now an antipattern causing deadlock and performance problem
 
 Invariant can be encoded to function returning option or result value which indicates the reason.
 
+#### FACTORIES
