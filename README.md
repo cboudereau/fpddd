@@ -478,5 +478,5 @@ Operations should be atomic even if it is eventual consistent
 This part does not explain how to implement invariant checks in constructor or factories. In constructor, when invariant is not meet, an exception is used. Exception is a lie on a method signature and it is harder to catch deep one (ie: Java exception runtime handling...). Another way is to use sum type like option or result one in a function as a factory. In OOP, builders are used for that but there the code can be messy as the aggregate structure is complex.
 
 #### REPOSITORIES
-Document store instead of full database model, this is the purpose of CQS, put a document for read operation updated by applying updates by queuing updates in an eventual consistency way. Write operations are centralized in a DB for example. Read store can be build from scratch from the write model.
+Document store instead of full database model, this is the purpose of CQS, put a document for read operation updated by applying updates by queuing updates in an eventual consistency way. Write operations are centralized in a DB for example. Read store can be build from scratch from the write model. 2 aggregates one for read operation and another for write operations. The read aggregates can be rebuild from the write one but not the opposite.
 
