@@ -489,3 +489,4 @@ In that part, caching technique is discussed, CQS is a kind of caching by taking
 
 ###  Using the Language in an Example: A Cargo Shipping System
 
+## Part III. Refactoring Toward Deeper Insight
