@@ -486,3 +486,5 @@ In that parts, ORM are not the one to treat all kind of problems like aggregatio
 
 In that part, caching technique is discussed, CQS is a kind of caching by taking care of the events to update the read model (cache)
 
+###  Using the Language in an Example: A Cargo Shipping System
+
