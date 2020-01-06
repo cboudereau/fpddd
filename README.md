@@ -484,3 +484,5 @@ METADATA MAPPING LAYERS : optics/lens is FP is the pattern for that.
 
 In that parts, ORM are not the one to treat all kind of problems like aggregation. The best way is to use simple tools like type providers whithout the need of a global technical solution for all repositories. Performance and Space are a good reasons to take care of that kind of problems. Why using full structures if only the count is used ? This is is kind of question that the dev should focus first on the domain before the solution.
 
+In that part, caching technique is discussed, CQS is a kind of caching by taking care of the events to update the read model (cache)
+
