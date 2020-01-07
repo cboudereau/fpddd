@@ -474,3 +474,81 @@ SPECIFICATION : avoid uses of boolean to represent cases, in FP a dedicated type
 When SPECIFICATION impacts performance, type provider helps a lots because the generated code is not SQL one (fsharp -> SQL) this is the opposite from SQL -> fsharp. That way it is easy to implement rules directly in sql server side. This is the difference between a conventional ORM that transform objects to relational database. Type provider + ANTICORRUPTION LAYER are BUILDING BLOCKS to bring SPECIFICATIONS at the right technical level (sometimes hard to implement with hexagonal architectures)
 
 
+### Example: Chemical Warehouse Packer
+```fsharp
+type Container = { Capacity : Size; Contents : Drum list; Features : ContainerFeature Set }
+and Drum = { Size : Size; Type : Chemical }
+and Chemical = | TNT | Sand | BiologicalSamples | Ammonia
+and ContainerFeature = | ArmoredContainer | VentilatedContainer
+and Size = Size of decimal
+            static member Zero = Size 0m
+            static member (+) (Size x, Size y) = Size (x + y)
+            static member (-) (Size x, Size y) = Size (x - y)
+
+type ContainerSpecification = Drum -> Container -> Container option
+type AddDrum = Drum -> Container -> Container option
+
+module Container = 
+    let remainingSpace container = container.Capacity - (container.Contents |> List.sumBy (fun x -> x.Size))
+
+    module Specitfications = 
+        //Container spectification spec combinator : rule f AND rule g
+        let (<&>) f g : ContainerSpecification = fun drum container -> f drum container |> Option.bind (g drum)
+        let validate : ContainerSpecification = 
+            let checkSpaceSpec : ContainerSpecification = fun drum container -> 
+                if remainingSpace container - drum.Size < Size.Zero then None
+                else Some container
+            let checkBiologicalSpec : ContainerSpecification =
+                let spec x y = 
+                    match x, y with
+                    | TNT, BiologicalSamples | BiologicalSamples, TNT -> false
+                    | _ -> true
+                fun drum container ->
+                    if container.Contents |> List.forall (fun x -> spec x.Type drum.Type) then
+                        Some container 
+                    else None
+            let checkFeature chemical feature : ContainerSpecification = 
+                fun drum container -> 
+                    if drum.Type <> chemical then Some container
+                    elif container.Features |> Set.exists ((=)feature) then Some container
+                    else None
+            let checkTNTSpec : ContainerSpecification = checkFeature TNT ArmoredContainer
+            let checkAmmoniaSpec : ContainerSpecification = checkFeature Ammonia VentilatedContainer
+
+            //Combine specs together with the AND operator over ContainerSpecification
+            checkSpaceSpec <&> checkBiologicalSpec <&> checkTNTSpec <&> checkAmmoniaSpec
+
+    let tryAdd : AddDrum = fun drum container -> 
+        Specitfications.validate drum container
+        |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Sandbox
+let container = { Capacity = Size 100m; Contents = []; Features = set [] }
+
+//Size problem
+Container.tryAdd { Size=Size 101m; Type = Sand } container = None
+
+//Feature problem
+let ammonia = { Size=Size 10m; Type=Ammonia } 
+let tnt = { Size=Size 10m; Type=TNT } 
+
+Container.tryAdd ammonia container = None
+Container.tryAdd tnt container = None
+
+{ container with Features = set [ ArmoredContainer ]}
+|> Container.tryAdd { Size=Size 10m; Type=TNT }
+|> Option.bind (Container.tryAdd { Size=Size 10m; Type=BiologicalSamples }) = None
+
+//Feature Compliant
+let sand = { Size=Size 100m; Type = Sand }
+Container.tryAdd sand container = Some { container with Contents = [sand] }
+Container.tryAdd ammonia { container with Features=set [ VentilatedContainer ] } = Some { container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }
+
+Container.tryAdd tnt { container with Features=set [ ArmoredContainer ]} = Some { container with Features=set [ ArmoredContainer ]; Contents = [tnt]}
+
+{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}
+|> Container.tryAdd ammonia
+|> Option.bind (Container.tryAdd tnt) = Some { container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }
+```
