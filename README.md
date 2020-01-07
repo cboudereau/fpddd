@@ -462,3 +462,5 @@ type LoanInvestment = LoanInvestment
 //Here a function is used to explain the relationship between Loan and LoanInvestment which is lost when using inheritance..
 type Contribution = Loan -> LoanInvestment
 ```
+
+### Making Implicit Concepts Explicit
