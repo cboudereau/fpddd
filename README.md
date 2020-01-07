@@ -450,3 +450,15 @@ In that part, caching technique is discussed, CQS is a kind of caching by taking
 Organize code by domain/boundary not by pattern like MVC...
 
 ## Part III. Refactoring Toward Deeper Insight
+
+"To create a design really fitted to the problem at hand, you must first have a model that captures the central relevant concepts of the domain" : Type Driven Development intent is to create first types and interactions/transformations between types like DDD does.
+
+#### A Decent Model, and Yet… 
+Instead of using inheritance which is hard to maintain and refactor, function composition is used to combine function together. That way the composition offers the same behavior like inheritance by composing function with much more simplicity and no refactoring problems. This is why it is important to type functions.
+
+```fsharp
+type Loan = Loan
+type LoanInvestment = LoanInvestment
+//Here a function is used to explain the relationship between Loan and LoanInvestment which is lost when using inheritance..
+type Contribution = Loan -> LoanInvestment
+```
