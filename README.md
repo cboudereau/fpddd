@@ -470,3 +470,7 @@ Continuous time to discrete time : the batch process can be translated to a sche
 SPECIFICATION : avoid uses of boolean to represent cases, in FP a dedicated types exists : sum types
 
 "Developers working in the logic-programming paradigm would handle this differently. Such rules would be expressed as "predicates". Predicates are functions that evaluate to “true” or “false” and can be combined using operators like "and" and "or" to express more complex rules. With predicates, we could declare rules explicitly and use them with the Invoice. If only we were in the logic paradigm. " In FP, function combinators are used to at the same time branch and compute result. This way the cyclomatic complexity is always 1 because the branching operations are encoded inside combinators operators which are basically functions.
+
+When SPECIFICATION impacts performance, type provider helps a lots because the generated code is not SQL one (fsharp -> SQL) this is the opposite from SQL -> fsharp. That way it is easy to implement rules directly in sql server side. This is the difference between a conventional ORM that transform objects to relational database. Type provider + ANTICORRUPTION LAYER are BUILDING BLOCKS to bring SPECIFICATIONS at the right technical level (sometimes hard to implement with hexagonal architectures)
+
+
