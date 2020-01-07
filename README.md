@@ -466,3 +466,5 @@ type Contribution = Loan -> LoanInvestment
 ### Making Implicit Concepts Explicit
 
 Continuous time to discrete time : the batch process can be translated to a scheduled event
+
+SPECIFICATION : avoid uses of boolean to represent cases, in FP a dedicated types exists : sum types
