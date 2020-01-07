@@ -492,7 +492,7 @@ module Container =
     let remainingSpace container = container.Capacity - (container.Contents |> List.sumBy (fun x -> x.Size))
 
     module Specitfications = 
-        //Container spectification spec combinator : rule f AND rule g
+        //Container spectification spec combinator (kleisli one promoted to AND) : rule f AND rule g
         let (<&>) f g : ContainerSpecification = fun drum container -> f drum container |> Option.bind (g drum)
         let validate : ContainerSpecification = 
             let checkSpaceSpec : ContainerSpecification = fun drum container -> 
@@ -521,8 +521,6 @@ module Container =
     let tryAdd : AddDrum = fun drum container -> 
         Specitfications.validate drum container
         |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Sandbox
 let container = { Capacity = Size 100m; Contents = []; Features = set [] }
