@@ -352,83 +352,52 @@ Locking an object is now an antipattern causing deadlock and performance problem
 Invariant can be encoded to function returning option or result value which indicates the reason.
 
 ```fsharp
-type PurchaseOrder = 
-    { OrderNumber : OrderNumber
-      PurchaseOrderLineItems : PurchaseOrderLineItem list
-      ApprovedLimit : ApprovedLimit }
-and PurchaseOrderLineItem = 
-    { LineItem : LineItem
-      Quantity : Quantity
-      Part : Part }
-and Part = 
-    { Price : Money
-      Name : PartName }
+//Domain
+type PurchaseOrder = { OrderNumber : OrderNumber; PurchaseOrderLineItems : PurchaseOrderLineItem list; ApprovedLimit : ApprovedLimit }
+and PurchaseOrderLineItem = { LineItem : LineItem; Quantity : Quantity; Part : Part }
+and Part = { Price : Money; Name : PartName }
 and Quantity = Quantity of int
-and Money = 
-    | Money of decimal
-    static member Zero = Money 0m
-    static member (*) (Money x, Quantity y) = Money (decimal y * x)
-    static member (+) (Money x, Money y) = Money (x + y)
-
+and Money = | Money of decimal
+            static member Zero = Money 0m
+            static member (*) (Money x, Quantity y) = Money (decimal y * x)
+            static member (+) (Money x, Money y) = Money (x + y)
 and PartName = PartName of string
 and OrderNumber = OrderNumber of int
 and ApprovedLimit = ApprovedLimit of Money
-and LineItem = 
-    | LineItem of int
-    static member (+) (LineItem x, LineItem y) = LineItem (x + y)
-
-module LineItem = 
-    let next = List.fold (+) (LineItem 1)
-
-module Part = 
-    let create price name = { Price = price; Name = name }
-
+and LineItem = | LineItem of int
+               static member (+) (LineItem x, LineItem y) = LineItem (x + y)
+module LineItem = let next = List.fold (+) (LineItem 1)
 module PurchaseOrderLineItem = 
     let total x = x.Part.Price * x.Quantity
     let create quantity part lineItem = { LineItem = lineItem; Quantity = quantity; Part = part }
-
 // DD Services with stateless purchaseorder (context is always the last parameters : PurchaseOrder)
 type AddItem = Part -> Quantity -> PurchaseOrder -> (LineItem * PurchaseOrder) option
 type DeleteItem = LineItem -> PurchaseOrder -> PurchaseOrder option
 type UpdateItem = Quantity -> LineItem -> PurchaseOrder -> PurchaseOrder option
-
-// CQS
-type PurchaseOrderCommand =
-    | AddItem of (Part * Quantity)
-    | DeleteItem of LineItem
-    | UpdateItem of (Quantity * LineItem)
-
+type PurchaseOrderCommand = AddItem of (Part * Quantity) | DeleteItem of LineItem | UpdateItem of (Quantity * LineItem)
 type PurchaseOrderTransaction = PurchaseOrderCommand -> (LineItem * PurchaseOrder) option
-
+//Implementation
 let addItem : AddItem = fun part quantity order ->
     let newLineItem = order.PurchaseOrderLineItems |> List.map (fun x -> x.LineItem) |> LineItem.next
-
-    let p = PurchaseOrderLineItem.create quantity part newLineItem
-        
-    let items = p :: order.PurchaseOrderLineItems
+    let items = PurchaseOrderLineItem.create quantity part newLineItem :: order.PurchaseOrderLineItems
     let total = items |> List.sumBy PurchaseOrderLineItem.total
-
     match order.ApprovedLimit with
     | ApprovedLimit limit when limit > total -> None
     | _ -> Some (newLineItem, { order with PurchaseOrderLineItems = items })
-
 let deleteItem : DeleteItem = fun lineItem order ->
     let (found, items) = List.foldBack (fun x (found, l) -> if x.LineItem = lineItem then true, l else found, x :: l) order.PurchaseOrderLineItems (false, [])
     if found then Some { order with PurchaseOrderLineItems = items }
     else None
-
 let updateItem : UpdateItem = fun quantity lineItem order ->
-    let (found, items) = List.foldBack (fun x (found, l) -> x.LineItem = lineItem || found, { x with Quantity = quantity } :: l) order.PurchaseOrderLineItems (false, [])
+    let (found, items) = List.foldBack (fun x (found, l) -> if x.LineItem = lineItem then true, { x with Quantity = quantity } :: l else found, x :: l) order.PurchaseOrderLineItems (false, [])
     if found then Some { order with PurchaseOrderLineItems = items }
     else None
-
 //Full DD Service implementation which take a command and update order if possible
 let update order = 
     function
     | AddItem (part, quantity) -> addItem part quantity order 
     | DeleteItem lineItem -> deleteItem lineItem order |> Option.map (fun x -> lineItem, x)
     | UpdateItem (quantity, lineItem) -> updateItem quantity lineItem order |> Option.map (fun x -> lineItem, x)
-
 // Statefull lockfree actor: updating the state by queuing messages to avoid lock on concurrent commands
 let statefullUpdate initialOrder : PurchaseOrderTransaction = 
     let actor order = MailboxProcessor.Start <| fun channel ->
@@ -439,24 +408,13 @@ let statefullUpdate initialOrder : PurchaseOrderTransaction =
                 reply state
                 return! state |> Option.map snd |> Option.defaultValue order |> read
             }
-
         read order
-
     let queue = actor initialOrder
-
     fun m -> queue.PostAndReply(fun channel -> channel.Reply, m)
-
-
 //Sandbox
 let guitars = { Name=PartName "Guitars"; Price=Money 100m }
 let trombones = { Name=PartName "Trombones"; Price=Money 200m }
-
-let initialOrder = 
-    { OrderNumber = OrderNumber 12946
-      ApprovedLimit = ApprovedLimit (Money 1000m)
-      PurchaseOrderLineItems = 
-        [ { LineItem=LineItem 1; Quantity=Quantity 3; Part=guitars }
-          { LineItem=LineItem 2; Quantity=Quantity 2; Part=trombones }] }
+let initialOrder = { OrderNumber = OrderNumber 12946; ApprovedLimit = ApprovedLimit (Money 1000m); PurchaseOrderLineItems = [ { LineItem=LineItem 1; Quantity=Quantity 3; Part=guitars }; { LineItem=LineItem 2; Quantity=Quantity 2; Part=trombones }] }
 
 let purchaseOrderTransaction = statefullUpdate initialOrder
 
