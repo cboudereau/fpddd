@@ -522,31 +522,30 @@ module Container =
         Specitfications.validate drum container
         |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
+    ///Factory pattern
+    let push drums container = 
+        let add x s = s |> Option.bind (tryAdd x)
+        Some container |> List.foldBack add drums
+
+
 //Sandbox
-let container = { Capacity = Size 100m; Contents = []; Features = set [] }
-
-//Size problem
-Container.tryAdd { Size=Size 101m; Type = Sand } container = None
-
-//Feature problem
 let ammonia = { Size=Size 10m; Type=Ammonia } 
 let tnt = { Size=Size 10m; Type=TNT } 
+let biologicalSamples  = { Size=Size 10m; Type=BiologicalSamples }
+let sand = { Size=Size 10m; Type = Sand }
 
-Container.tryAdd ammonia container = None
-Container.tryAdd tnt container = None
+let container = { Capacity = Size 100m; Contents = []; Features = set [] }
 
-{ container with Features = set [ ArmoredContainer ]}
-|> Container.tryAdd { Size=Size 10m; Type=TNT }
-|> Option.bind (Container.tryAdd { Size=Size 10m; Type=BiologicalSamples }) = None
+//Spec problems
+container |> Container.push [ { sand with Size=Size 101m } ] = None
+container |> Container.push [ammonia] = None
+container |> Container.push [tnt] = None
+{ container with Features = set [ ArmoredContainer ]} |> Container.push [tnt; biologicalSamples] = None
+{ container with Features = set [ ArmoredContainer; VentilatedContainer ]} |> Container.push [ammonia; tnt; biologicalSamples] = None
 
 //Feature Compliant
-let sand = { Size=Size 100m; Type = Sand }
-Container.tryAdd sand container = Some { container with Contents = [sand] }
-Container.tryAdd ammonia { container with Features=set [ VentilatedContainer ] } = Some { container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }
-
-Container.tryAdd tnt { container with Features=set [ ArmoredContainer ]} = Some { container with Features=set [ ArmoredContainer ]; Contents = [tnt]}
-
-{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}
-|> Container.tryAdd ammonia
-|> Option.bind (Container.tryAdd tnt) = Some { container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }
+container |> Container.push [ { sand with Size = Size 100m } ] = Some { container with Contents = [ { sand with Size = Size 100m }] }
+{ container with Features = set [ VentilatedContainer ] } |> Container.push [ ammonia ] = Some { container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }
+{ container with Features = set [ ArmoredContainer ]} |> Container.push [ tnt ] = Some { container with Features=set [ ArmoredContainer ]; Contents = [tnt]}
+{ container with Features = set [ ArmoredContainer; VentilatedContainer ]} |> Container.push [tnt;ammonia]= Some { container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }
 ```
