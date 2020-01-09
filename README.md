@@ -586,3 +586,5 @@ Container.pack [] [container] = Ok [container]
 
 [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Container.pack [tnt;ammonia]= Ok [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }]
 ```
+
+### Supple Design
