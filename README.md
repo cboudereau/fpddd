@@ -588,3 +588,4 @@ Container.pack [] [container] = Ok [container]
 ```
 
 ### Supple Design
+#### INTENTION REVEALING INTERFACES
