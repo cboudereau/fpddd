@@ -488,6 +488,7 @@ When SPECIFICATION impacts performance, type provider helps a lots because the g
 
 ### Example: Chemical Warehouse Packer
 ```fsharp
+//Domain
 type Container = { Capacity : Size; Contents : Drum list; Features : ContainerFeature Set }
 and Drum = { Size : Size; Type : Chemical }
 and Chemical = | TNT | Sand | BiologicalSamples | Ammonia
@@ -497,19 +498,27 @@ and Size = Size of decimal
             static member (+) (Size x, Size y) = Size (x + y)
             static member (-) (Size x, Size y) = Size (x - y)
 
+//Services
 type ContainerSpecification = Drum -> Container -> Container option
+type PackingError = NoAnswerFound
 type AddDrum = Drum -> Container -> Container option
+//Now, no need to use exception when the return type is a value or a business error. The business error appears clearly into the DDD service
+type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 
+//Implementations
 module Container = 
     let remainingSpace container = container.Capacity - (container.Contents |> List.sumBy (fun x -> x.Size))
 
     module Specitfications = 
-        //Container spectification spec combinator (kleisli one promoted to AND) : rule f AND rule g
-        let (<&>) f g : ContainerSpecification = fun drum container -> f drum container |> Option.bind (g drum)
+        //Container spectification spec combinator (kleisli) : spec1 AND spec2
+        let (>=>) (spec1:ContainerSpecification) (spec2:ContainerSpecification) : ContainerSpecification = fun drum container -> spec1 drum container |> Option.bind (spec2 drum)
+        
+        //The main validate function which is a composition of specifications
         let validate : ContainerSpecification = 
             let checkSpaceSpec : ContainerSpecification = fun drum container -> 
                 if remainingSpace container - drum.Size < Size.Zero then None
                 else Some container
+
             let checkBiologicalSpec : ContainerSpecification =
                 let spec x y = 
                     match x, y with
@@ -519,6 +528,7 @@ module Container =
                     if container.Contents |> List.forall (fun x -> spec x.Type drum.Type) then
                         Some container 
                     else None
+            
             let checkFeature chemical feature : ContainerSpecification = 
                 fun drum container -> 
                     if drum.Type <> chemical then Some container
@@ -527,37 +537,52 @@ module Container =
             let checkTNTSpec : ContainerSpecification = checkFeature TNT ArmoredContainer
             let checkAmmoniaSpec : ContainerSpecification = checkFeature Ammonia VentilatedContainer
 
-            //Combine specs together with the AND operator over ContainerSpecification
-            checkSpaceSpec <&> checkBiologicalSpec <&> checkTNTSpec <&> checkAmmoniaSpec
+            //Combine specs together with the composition operator over ContainerSpecification. Order is important to fail fast
+            checkSpaceSpec 
+            >=> checkBiologicalSpec 
+            >=> checkTNTSpec 
+            >=> checkAmmoniaSpec
 
+    //Container functions
     let tryAdd : AddDrum = fun drum container -> 
-        Specitfications.validate drum container
-        |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
+        Specitfications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
-    ///Factory pattern
-    let push drums container = 
-        let add x s = s |> Option.bind (tryAdd x)
-        Some container |> List.foldBack add drums
+    let pack : Pack = fun drums containers -> 
+        let packContainer container drums = 
+            let add drum (container, remaining) =
+                tryAdd drum container
+                |> Option.map (fun x -> x, remaining)
+                |> Option.defaultValue (container, drum :: remaining)
 
+            List.foldBack add drums (container, [])
+
+        match List.mapFoldBack packContainer containers drums with
+        | (containers, []) -> Ok containers
+        | _ -> Error NoAnswerFound
 
 //Sandbox
 let ammonia = { Size=Size 10m; Type=Ammonia } 
 let tnt = { Size=Size 10m; Type=TNT } 
-let biologicalSamples  = { Size=Size 10m; Type=BiologicalSamples }
+let biologicalSamples = { Size=Size 10m; Type=BiologicalSamples }
 let sand = { Size=Size 10m; Type = Sand }
 
 let container = { Capacity = Size 100m; Contents = []; Features = set [] }
 
+//Invariant
+Container.pack [] [] = Ok []
+Container.pack [] [container] = Ok [container]
+
 //Spec problems
-container |> Container.push [ { sand with Size=Size 101m } ] = None
-container |> Container.push [ammonia] = None
-container |> Container.push [tnt] = None
-{ container with Features = set [ ArmoredContainer ]} |> Container.push [tnt; biologicalSamples] = None
-{ container with Features = set [ ArmoredContainer; VentilatedContainer ]} |> Container.push [ammonia; tnt; biologicalSamples] = None
+[container] |> Container.pack [ { sand with Size = Size 101m } ] = Error NoAnswerFound
+[container] |> Container.pack [ammonia] = Error NoAnswerFound
+[container] |> Container.pack [tnt] = Error NoAnswerFound
+[{ container with Features = set [ ArmoredContainer ]}] |> Container.pack [tnt; biologicalSamples] = Error NoAnswerFound
+[{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Container.pack [ammonia; tnt; biologicalSamples] = Error NoAnswerFound
 
 //Feature Compliant
-container |> Container.push [ { sand with Size = Size 100m } ] = Some { container with Contents = [ { sand with Size = Size 100m }] }
-{ container with Features = set [ VentilatedContainer ] } |> Container.push [ ammonia ] = Some { container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }
-{ container with Features = set [ ArmoredContainer ]} |> Container.push [ tnt ] = Some { container with Features=set [ ArmoredContainer ]; Contents = [tnt]}
-{ container with Features = set [ ArmoredContainer; VentilatedContainer ]} |> Container.push [tnt;ammonia]= Some { container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }
+[container] |> Container.pack [ { sand with Size = Size 100m } ] = Ok [{ container with Contents = [ { sand with Size = Size 100m }] }]
+[{ container with Features = set [ VentilatedContainer ] }] |> Container.pack [ ammonia ] = Ok [{ container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }]
+[{ container with Features = set [ ArmoredContainer ]}] |> Container.pack [ tnt ] = Ok [{ container with Features=set [ ArmoredContainer ]; Contents = [tnt]}]
+
+[{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Container.pack [tnt;ammonia]= Ok [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [tnt; ammonia] }]
 ```
