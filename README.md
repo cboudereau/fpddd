@@ -625,3 +625,10 @@ In FP, morphism is clearly the right tool to do that.
 This is clearly why "Domain modeling made functional" is for.
 
 #### INTENTION REVEALING INTERFACES
+
+"If a developer must consider the implementation of a component in order to use it, the value of encapsulation is lost".
+This is why inlike OOP, in FP, typing each function of the Domain helps a lot to intention
+```fsharp
+type Pack = Drum list -> Container list -> Result<Container list, PackingError>
+```
+
