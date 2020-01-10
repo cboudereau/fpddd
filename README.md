@@ -610,4 +610,13 @@ type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 
 Another reason, the dev found the corresponding feature but for some reason, the workflow changed in the middle and due to lack of composition, the reuse of code was not possible. If the full implementation of the validate function was not a composition of specs, it will not possible to reuse as this the implementation. And sometimes, the refactoring from one big methods to little one is hard and code duplication starts.
 
+"Classes and methods can be broken down for better reuse, but it gets hard to keep track of what all the little parts do". This is because methods and class are not the right primitive to do that. When you check the signature of a methods, the method contains often too much primitives not related to the domain and sometimes confusing. In FP, DDD services are typed and composition/pipeline are the building blocks to keep track of what a little function do like the little specifications functions
+
+```fsharp
+let checkSpaceSpec : ContainerSpecification = fun drum container -> 
+    if remainingSpace container - drum.Size < Size.Zero then None
+    else Some container
+```
+
+
 #### INTENTION REVEALING INTERFACES
