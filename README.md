@@ -621,4 +621,7 @@ let checkSpaceSpec : ContainerSpecification = fun drum container ->
 "Supple design is the complement to deep modeling. Once you’ve dug out implicit concepts and made them explicit, you have the raw material. Through the iterative cycle you hammer that material into a useful shape, cultivating a model that simply and clearly captures the key concerns and shaping a design that allows a client developer to really put that model to work"
 In FP, morphism is clearly the right tool to do that.
 
+"A lot of over-engineering has been justified in the name of flexibility. But, more often than not, excessive layers of abstraction and indirection get in the way. Look at the design of software that really empowers the people who handle it, and you will usually see something simple. Simple is not easy. To make complex systems work, a dedication to MODEL-DRIVEN DESIGN has to be joined with a moderately rigorous design style. It may well require relatively sophisticated design skill to create or to use." 
+This is clearly why "Domain modeling made functional" is for.
+
 #### INTENTION REVEALING INTERFACES
