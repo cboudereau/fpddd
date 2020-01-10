@@ -618,5 +618,7 @@ let checkSpaceSpec : ContainerSpecification = fun drum container ->
     else Some container
 ```
 
+"Supple design is the complement to deep modeling. Once you’ve dug out implicit concepts and made them explicit, you have the raw material. Through the iterative cycle you hammer that material into a useful shape, cultivating a model that simply and clearly captures the key concerns and shaping a design that allows a client developer to really put that model to work"
+In FP, morphism is clearly the right tool to do that.
 
 #### INTENTION REVEALING INTERFACES
