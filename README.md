@@ -347,6 +347,97 @@ order |> addItem part = Some ({order with PurchaseOrderLineItems=[part]})
 order |> addItem { part with Quantity=2 } = None
 ```
 
+Version using full implementation with actor to manage state and concurrency:
+```fsharp
+//Type is the Aggregate root
+type PurchaseOrder = { OrderNumber : OrderNumber; PurchaseOrderLineItems:PurchaseOrderLineItem list; ApprovedLimit : ApprovedLimit }
+//and are underlying ENTITIES or VALUE OBJECTS
+and PurchaseOrderLineItem = { LineItem : LineItem; Quantity:Quantity; Part:Part }
+and Part = { Price : Money; Name : PartName }
+and Quantity = Quantity of int
+and Money = Money of decimal with
+    //Arithmetic operations inside the domain
+    static member (+) (Money x, Money y) = Money (x + y)
+    static member Zero = Money 0m
+    static member (*) (Money x, Quantity qty) = Money (decimal qty * x)
+and PartName = PartName of string
+and OrderNumber = OrderNumber of int
+and ApprovedLimit = ApprovedLimit of Money
+and LineItem = LineItem of int with static member (+) (LineItem x, LineItem y) = LineItem (x + y)
+module LineItem = let next = List.fold (+) (LineItem 1)
+module PurchaseOrderLineItem = 
+    let total x = x.Part.Price * x.Quantity
+    let create quantity part lineItem = { LineItem = lineItem; Quantity = quantity; Part = part }
+//DDD Service
+type AddItem = Part -> Quantity-> PurchaseOrder -> (LineItem * PurchaseOrder) option
+type DeleteItem = LineItem -> PurchaseOrder -> PurchaseOrder option
+type UpdateItem = Quantity -> LineItem -> PurchaseOrder -> PurchaseOrder option
+type PurchaseOrderCommand = AddItem of (Part * Quantity) | DeleteItem of LineItem | UpdateItem of (Quantity * LineItem)
+type PurchaseOrderTransaction = PurchaseOrderCommand -> (LineItem * PurchaseOrder) option
+//Implementation
+module PurchaseOrder = 
+    let addItem : AddItem = fun part quantity order ->
+        let newLineItem = order.PurchaseOrderLineItems |> List.map (fun x -> x.LineItem) |> LineItem.next
+        let items = PurchaseOrderLineItem.create quantity part newLineItem :: order.PurchaseOrderLineItems
+        let total = items |> List.sumBy PurchaseOrderLineItem.total
+        match order.ApprovedLimit with
+        | ApprovedLimit limit when limit > total -> None
+        | _ -> 
+            Some (newLineItem, { order with PurchaseOrderLineItems = items })
+    let deleteItem : DeleteItem = fun lineItem order ->
+        let (found, items) = List.foldBack (fun x (found, l) -> if x.LineItem = lineItem then true, l else found, x :: l) order.PurchaseOrderLineItems (false, [])
+        if found then Some { order with PurchaseOrderLineItems = items }
+        else None
+    let updateItem : UpdateItem = fun quantity lineItem order ->
+        let (found, items) = 
+            List.foldBack (fun x (found, l) -> 
+                if x.LineItem = lineItem then true, { x with Quantity = quantity } :: l 
+                else found, (x :: l)) order.PurchaseOrderLineItems (false, [])
+        
+        if found then Some { order with PurchaseOrderLineItems = items }
+        else None
+    
+    //Full DDD Service implementation that takes a command and updates order if possible
+    let update order = 
+        function
+        | AddItem (part, quantity) -> addItem part quantity order
+        | DeleteItem lineItem -> deleteItem lineItem order |> Option.map(fun x -> lineItem, x)
+        | UpdateItem (quantity, lineItem) -> updateItem quantity lineItem order |> Option.map (fun x -> lineItem, x)
+
+    let statefullUpdate initialOrder : PurchaseOrderTransaction = 
+        let actor order = MailboxProcessor.Start <| fun channel ->
+            let rec read order = 
+                async {
+                    let! (reply, command) = channel.Receive()
+                    let state = update order command
+                    reply state
+                    return! state |> Option.map snd |> Option.defaultValue order |> read
+                }
+            read order
+        let queue = actor initialOrder
+        fun m -> queue.PostAndReply(fun channel -> channel.Reply, m)
+
+//Sandbox
+let guitar = { Name=PartName "Guitar"; Price=Money 100m }
+let trombone = { Name = PartName "Trombone"; Price=Money 200m }
+let piano = { Name=PartName "Piano"; Price = Money 1000m }
+let initialOrder = 
+    { OrderNumber = OrderNumber 12946
+      ApprovedLimit = ApprovedLimit (Money 1000m)
+      PurchaseOrderLineItems = 
+        [ { LineItem = LineItem 1; Quantity = Quantity 1; Part = guitar }
+          { LineItem = LineItem 2; Quantity = Quantity 2; Part = trombone } ] }
+
+let purchaseOrderTransaction = PurchaseOrder.statefullUpdate initialOrder
+[ DeleteItem (LineItem 1)
+  DeleteItem (LineItem 10) 
+  DeleteItem (LineItem 2)
+  AddItem (piano, Quantity 1) ]
+|> List.map (fun x -> async { return purchaseOrderTransaction x })
+|> Async.Parallel
+|> Async.RunSynchronously
+```
+
 Locking an object is now an antipattern causing deadlock and performance problems. Turn the lock into an intention : a command or a notification and handle the message to manage the aggregate by queuing messages without using lock systems. If the message is splitable, separates aggregates like the booking count and room stock for a hotel booking engine app.
 
 Invariant can be encoded to function returning option or result value which indicates the reason.
