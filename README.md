@@ -728,4 +728,25 @@ type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 #### SIDE-EFFECT-FREE FUNCTIONS
 
 In FP, languages are pure, this mean side effect are made through monads like Haskell or hybrid like fsharp whete you can choose to use monads or another way to handle side effects. In any solutions functions are side effect free and the context is passed as argument (the last one generally). That way commands and queries share a context which is given as parameter and managed through a monad or an actor.
+In the previous sample of PurchaseOrder, an actor has been used to manage the aggregate root : 
+The update function does not manage the state of the aggregate root but instead, given an aggregate operates on it and return the new aggregate with side free effect. The statefullUpdate take care of commands which update the state concurrently without messing the aggregate. The state is passed as parameter to the read function by processing messages. At the end of the definition a function is returned to put messages on the actor's queue.
+```fsharp
+let update order = 
+        function
+        | AddItem (part, quantity) -> addItem part quantity order
+        | DeleteItem lineItem -> deleteItem lineItem order |> Option.map(fun x -> lineItem, x)
+        | UpdateItem (quantity, lineItem) -> updateItem quantity lineItem order |> Option.map (fun x -> lineItem, x)
 
+let statefullUpdate initialOrder : PurchaseOrderTransaction = 
+    let actor order = MailboxProcessor.Start <| fun channel ->
+        let rec read order = 
+            async {
+                let! (reply, command) = channel.Receive()
+                let state = update order command
+                reply state
+                return! state |> Option.map snd |> Option.defaultValue order |> read
+            }
+        read order
+    let queue = actor initialOrder
+    fun m -> queue.PostAndReply(fun channel -> channel.Reply, m)
+```
