@@ -588,4 +588,13 @@ Container.pack [] [container] = Ok [container]
 ```
 
 ### Supple Design
+"Duplication starts to appear as soon as a developer isn’t confident of predicting the full implications of a computation. Duplication is forced when design elements are monolithic so that the parts cannot be recombined". This sentence is true in OOP because the tool to combine functions/methods together is class and create hard coupling problems. In FP, functions and the building blocks of implementations, that way it is pretty to combine and avoid duplication without taking a lots of risk for the future like the validate functions of the ContainerSpecification (kleisli composition, which combines 2 functions to one, like a fork/join pattern) : 
+
+```fsharp
+checkSpaceSpec 
+>=> checkBiologicalSpec 
+>=> checkTNTSpec 
+>=> checkAmmoniaSpec
+```
+
 #### INTENTION REVEALING INTERFACES
