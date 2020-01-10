@@ -634,3 +634,7 @@ type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 
 "Type names, method names, and argument names" -> Type names, Type function, Type argument : Type all the things!
 
+#### SIDE-EFFECT-FREE FUNCTIONS
+
+In FP, languages are pure, this mean side effect are made through monads like Haskell or hybrid like fsharp whete you can choose to use monads or another way to handle side effects. In any solutions functions are side effect free and the context is passed as argument (the last one generally). That way commands and queries share a context which is given as parameter and managed through a monad or an actor.
+
