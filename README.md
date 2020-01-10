@@ -765,6 +765,22 @@ let statefullUpdate initialOrder : PurchaseOrderTransaction =
 "Operations that return results without side effects are called “functions”. A function can be called multiple times and return the same value each time. A function can call on other functions without worrying about the depth of nesting. Functions are much easier to test than operations that have side effects. For these reasons, functions lower risk. ". At that time, no debats, in FP, no methods there, instead function without side effects.
 
 #### ASSERTIONS
-In FP, structure of type (Sum type, ...) helps a lot to make illegal state unrepresentable reducing the number of assertions needed to have a real DDD app. So the first rule is to enforce the design first and then add assertions in factories to make sure that objects are valid.
+In FP, structure of type (Sum type, ...) helps a lot to make illegal state unrepresentable reducing the number of assertions needed to have a real DDD app. So the first rule is to enforce the design first and then add assertions in factories to make sure that objects are valid. In the container sample app, validation is constently used when adding item on the container. That way by design pre condition and post condition are implemented by design : 
+```fsharp
+let tryAdd : AddDrum = fun drum container -> 
+    Specitfications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
+let pack : Pack = fun drums containers -> 
+    let packContainer container drums = 
+        let add drum (container, remaining) =
+            tryAdd drum container
+            |> Option.map (fun x -> x, remaining)
+            |> Option.defaultValue (container, drum :: remaining)
+
+        List.foldBack add drums (container, [])
+
+    match List.mapFoldBack packContainer containers drums with
+    | (containers, []) -> Ok containers
+    | _ -> Error NoAnswerFound
+```
 
