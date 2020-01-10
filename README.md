@@ -597,4 +597,17 @@ checkSpaceSpec
 >=> checkAmmoniaSpec
 ```
 
+Why duplication is created by dev : the duplication is revealed on a refactoring. when the dev searched into the existing codebase, he might not found the feature. By defining service as type, this kind of duplication can be avoid as quick as possible because the dev does not still read the full implementation to understand the interactions between value object and entities : 
+
+```fsharp
+//Services
+type ContainerSpecification = Drum -> Container -> Container option
+type PackingError = NoAnswerFound
+type AddDrum = Drum -> Container -> Container option
+//Now, no need to use exception when the return type is a value or a business error. The business error appears clearly into the DDD service
+type Pack = Drum list -> Container list -> Result<Container list, PackingError>
+```
+
+Another reason, the dev found the corresponding feature but for some reason, the workflow changed in the middle and due to lack of composition, the reuse of code was not possible. If the full implementation of the validate function was not a composition of specs, it will not possible to reuse as this the implementation. And sometimes, the refactoring from one big methods to little one is hard and code duplication starts.
+
 #### INTENTION REVEALING INTERFACES
