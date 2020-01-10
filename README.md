@@ -754,3 +754,6 @@ let statefullUpdate initialOrder : PurchaseOrderTransaction =
 
 "Operations that return results without side effects are called “functions”. A function can be called multiple times and return the same value each time. A function can call on other functions without worrying about the depth of nesting. Functions are much easier to test than operations that have side effects. For these reasons, functions lower risk. ". At that time, no debats, in FP, no methods there, instead function without side effects.
 
+#### ASSERTIONS
+
+
