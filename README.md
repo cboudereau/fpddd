@@ -632,3 +632,5 @@ This is why inlike OOP, in FP, typing each function of the Domain helps a lot to
 type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 ```
 
+"Type names, method names, and argument names" -> Type names, Type function, Type argument : Type all the things!
+
