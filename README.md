@@ -3,10 +3,10 @@
 Notes : 
 In FP, everything is value, no objects there in DDD, objects are values or entities. The only difference between values and entities are the presence of an identifier. Instead, in FP, types are the most important building blocks. Here is a mapping from DDD to FP : 
 
-Objects -> Types
-Values -> Values
-Entities -> Records/Entities
-Services -> Functions
+- Objects -> Types
+- Values -> Values
+- Entities -> Records/Entities
+- Services -> Functions
 
 ## Part I. Putting the Domain Model to Work
 
