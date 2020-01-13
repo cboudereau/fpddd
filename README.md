@@ -783,4 +783,5 @@ let pack : Pack = fun drums containers ->
     | (containers, []) -> Ok containers
     | _ -> Error NoAnswerFound
 ```
-
+"True, a command containing no complex computations may be fairly easy to interpret by inspection. But in a design where larger parts are built of smaller ones, a command may invoke other commands. The developer using the high-level command must understand the consequences of each underlying command. So much for encapsulation."
+By using a type for commands and operator to chain function, the encapsulation is done nicely and the dev quick understand the command chain.
