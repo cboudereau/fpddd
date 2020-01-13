@@ -839,5 +839,6 @@ This is what a monoid is! A binary operation like (+) and a zero/mempty/neutral 
 "code generation techniques that cripple the iterative cycle by merging generated code into hand-written code in a way that makes regeneration very destructive". 
 Yes when tech and domain code are not separated. In case of using type provider, there is no generated code; instead a fully type structure generated at design time that helps dev to prototype and extract the domain. In general code generation is a destructive techniques.
 
-
+"Rule-based programming with an inference engine and declarative rule base aims at these ideals too, and, as I’ve mentioned in other chapters, presents an enticing approach to domain-driven design. It also provides an example of how subtle the issues can be. "
+This is because Rules are implicit and encoded inside a framework with a hidden workflow. Function composition is still relevant to have the benefit is a fully explicit and composite way.
 
