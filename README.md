@@ -854,3 +854,24 @@ checkSpaceSpec
 |> andThen checkAmmoniaSpec
 ```
 
+An infered and strongly language can bring directly BDD without any frameworks with a little extra noise in the design. A simple measure is the number of keyword used to have a full type specifications of the domain.
+```fsharp
+type Container = { Capacity : Size; Contents : Drum list; Features : ContainerFeature Set }
+and Drum = { Size : Size; Type : Chemical }
+and Chemical = | TNT | Sand | BiologicalSamples | Ammonia
+and ContainerFeature = | ArmoredContainer | VentilatedContainer
+and Size = Size of decimal
+            static member Zero = Size 0m
+            static member (+) (Size x, Size y) = Size (x + y)
+            static member (-) (Size x, Size y) = Size (x - y)
+
+//Services
+type ContainerSpecification = Drum -> Container -> Container option
+type PackingError = NoAnswerFound
+type AddDrum = Drum -> Container -> Container option
+//Now, no need to use exception when the return type is a value or a business error. The business error appears clearly into the DDD service
+type Pack = Drum list -> Container list -> Result<Container list, PackingError>
+```
+
+Here only static member are not part of the DSL. In any OOP languages, there much more noise than this one.
+
