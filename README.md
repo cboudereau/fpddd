@@ -929,5 +929,5 @@ There are many such formalized conceptual frameworks, but my personal favorite i
 Then FP, is math logic for devs..
 
 ### Applying Analysis Patterns 
-
+### Relating Design Patterns to the Model
 
