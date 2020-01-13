@@ -896,4 +896,25 @@ let (<|>) spec1 spec2 : ContainerSpecification =
         | None -> spec2 drum container
 ```
 
+##### Subsumption
+```fsharp
+type Candidate = { Age:int }
+
+type Assertion = Candidate -> Candidate option
+
+type Specifications = MinimumAgeSpec of (int * Assertion)
+
+let subsumes other x  = 
+    match x, other with
+    | MinimumAgeSpec (oldThreshold, _), MinimumAgeSpec (newThreshold, _) when oldThreshold >= newThreshold -> Some x
+    | _ -> None
+
+let minimumAgeSpec threshold = MinimumAgeSpec (threshold, fun candidate -> if candidate.Age >= threshold then Some candidate else None)
+
+let drivingAge = minimumAgeSpec 16
+let votingAge = minimumAgeSpec 18
+
+votingAge |> subsumes drivingAge |> Option.isSome
+```
+
 
