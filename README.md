@@ -789,8 +789,12 @@ By using a type for commands and operator to chain function, the encapsulation i
 
 consistent design in cohesive units can be handled easier with function composition like the validation one. The interface is still the same but splitted into different rules.
 ```fsharp
+//INTENTION REVEALING INTERFACE
+type ContainerSpecification = Drum -> Container -> Container option
+//SIDE-EFFECT FREE FUNCTIONS 
 let validate : ContainerSpecification = 
     let checkSpaceSpec : ContainerSpecification = fun drum container -> 
+        //ASSERTIONS 
         if remainingSpace container - drum.Size < Size.Zero then None
         else Some container
 
@@ -812,11 +816,13 @@ let validate : ContainerSpecification =
     let checkTNTSpec : ContainerSpecification = checkFeature TNT ArmoredContainer
     let checkAmmoniaSpec : ContainerSpecification = checkFeature Ammonia VentilatedContainer
 
-    //Combine specs together with the composition operator over ContainerSpecification. Order is important to fail fast
+    //CONCEPTUAL CONTOURS 
     checkSpaceSpec 
     >=> checkBiologicalSpec 
     >=> checkTNTSpec 
     >=> checkAmmoniaSpec
 ```
-WHOLE VALUE : In OOP, classes are often the only type used to transpose domain and compose complex functions together. In FP, types can still be used to do that, but generally, function composition and combinators are used to split the problem in little functions, commpose them together with operators or types. By specifing firstly AGGREGATES, ENTITIES, VALUE OBJECT and SERVICES in a domain file, the domain expert and dev can still commuunicates even if the domain is complex. That way it is easy to check if the domain is aligned to the actual implementation and compare complexity. The implementation should not be more complex than the domain. There is always a design problem when the code is more complex than the domain (over engeneering or bad using of types). Classes are not the only way to compose things (Think about linq in csharp with monads). 
+WHOLE VALUE : In OOP, classes are often the only type used to transpose domain and compose complex functions together. In FP, types can still be used to do that, but generally, function composition and combinators are used to split the problem in little functions, commpose them together with operators or types. By specifing firstly AGGREGATES, ENTITIES, VALUE OBJECT and SERVICES in a domain file, the domain expert and dev can still commuunicates even if the domain is complex. That way it is easy to check if the domain is aligned to the actual implementation and compare complexity. The implementation should not be more complex than the domain. There is always a design problem when the code is more complex than the domain (over engeneering or bad using of types). Classes are not the only way to compose things (Think about linq in csharp with monads and function composition over list).
+
+
 
