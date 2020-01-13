@@ -948,6 +948,6 @@ let deepsea = Composite (Leg, Composite(Leg, Leaf Leg))
 let inbound = Composite (Leg, Leaf Leg)
 ```
 
-
-
 ### Bringing the Pieces Together 
+
+## Part IV. Strategic Design
