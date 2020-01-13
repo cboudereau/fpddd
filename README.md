@@ -824,5 +824,20 @@ let validate : ContainerSpecification =
 ```
 WHOLE VALUE : In OOP, classes are often the only type used to transpose domain and compose complex functions together. In FP, types can still be used to do that, but generally, function composition and combinators are used to split the problem in little functions, commpose them together with operators or types. By specifing firstly AGGREGATES, ENTITIES, VALUE OBJECT and SERVICES in a domain file, the domain expert and dev can still commuunicates even if the domain is complex. That way it is easy to check if the domain is aligned to the actual implementation and compare complexity. The implementation should not be more complex than the domain. There is always a design problem when the code is more complex than the domain (over engeneering or bad using of types). Classes are not the only way to compose things (Think about linq in csharp with monads and function composition over list).
 
+#### STANDALONE CLASSES (TYPES)
+
+Removing dependencies in ENTITIES and VALUE OBJECT can be done using function type to handle dependency without injecting the behavior but by composing types dependant to another one. That way a natural transformation of types to another one is like a join pattern and there is no need to use artificial dependency and then having high coupled classes.
+
+#### CLOSURE OF OPERATIONS
+This is what a monoid is! A binary operation like (+) and a zero/mempty/neutral associated with the binary operation is the identity.
+```fsharp
+1. + 0. = 1.
+1. + 1. = 2.
+```
+
+#### Declarative Design
+"code generation techniques that cripple the iterative cycle by merging generated code into hand-written code in a way that makes regeneration very destructive". 
+Yes when tech and domain code are not separated. In case of using type provider, there is no generated code; instead a fully type structure generated at design time that helps dev to prototype and extract the domain. In general code generation is a destructive techniques.
+
 
 
