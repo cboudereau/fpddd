@@ -931,3 +931,15 @@ Then FP, is math logic for devs..
 ### Applying Analysis Patterns 
 ### Relating Design Patterns to the Model
 
+#### STRATEGY AKA POLICY
+This is basically function composition over sum types. like the MinimumAgeSpec
+
+#### COMPOSITE
+```fsharp
+type Component<'a> = 
+    | Leaf of 'a
+    | Composite of 'a * Component<'a>
+
+module Composite = 
+    let add x c = Composite (x, c)
+```
