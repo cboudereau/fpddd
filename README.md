@@ -940,6 +940,14 @@ type Component<'a> =
     | Leaf of 'a
     | Composite of 'a * Component<'a>
 
-module Composite = 
-    let add x c = Composite (x, c)
+type Leg = Leg
+
+let origin = Leaf Leg
+let outbound = Composite (Leg, Leaf Leg)
+let deepsea = Composite (Leg, Composite(Leg, Leaf Leg))
+let inbound = Composite (Leg, Leaf Leg)
 ```
+
+
+
+### Bringing the Pieces Together 
