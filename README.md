@@ -886,11 +886,14 @@ In FP, this techniques is called combinators (and, or, kleisli, ....).
 let (<&>) spec1 spec2 : ContainerSpecification = 
     fun drum container ->
         match spec1 drum container with
-        | Some container -> spec2 drum container
+        | Some candidate -> spec2 drum candidate
         | None -> None
+//Or operator combinator
 let (<|>) spec1 spec2 : ContainerSpecification = 
     fun drum container ->
         match spec1 drum container with
         | Some container -> Some container
         | None -> spec2 drum container
 ```
+
+
