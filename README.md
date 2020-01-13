@@ -842,3 +842,15 @@ Yes when tech and domain code are not separated. In case of using type provider,
 "Rule-based programming with an inference engine and declarative rule base aims at these ideals too, and, as I’ve mentioned in other chapters, presents an enticing approach to domain-driven design. It also provides an example of how subtle the issues can be. "
 This is because Rules are implicit and encoded inside a framework with a hidden workflow. Function composition is still relevant to have the benefit is a fully explicit and composite way.
 
+##### Domain-Specific Languages 
+Functions + type inference helps a lot to have domain specific languages.
+
+```fsharp
+//Lets move the operator to a word, after all we are not all coders loving maths!
+let andThen g f = f >=> g
+checkSpaceSpec 
+|> andThen checkBiologicalSpec 
+|> andThen checkTNTSpec 
+|> andThen checkAmmoniaSpec
+```
+
