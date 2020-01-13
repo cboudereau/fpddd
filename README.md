@@ -875,3 +875,22 @@ type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 
 Here only static member are not part of the DSL. In any OOP languages, there much more noise than this one.
 
+#### Extending SPECIFICATIONS in a Declarative Style
+##### Combining Specifications Using Logical Operators
+This is what kleisli composition operator is for by combining 2 specfications returning a combined specifications
+In FP, this techniques is called combinators (and, or, kleisli, ....).
+
+
+```fsharp
+//And operator combinator
+let (<&>) spec1 spec2 : ContainerSpecification = 
+    fun drum container ->
+        match spec1 drum container with
+        | Some container -> spec2 drum container
+        | None -> None
+let (<|>) spec1 spec2 : ContainerSpecification = 
+    fun drum container ->
+        match spec1 drum container with
+        | Some container -> Some container
+        | None -> spec2 drum container
+```
