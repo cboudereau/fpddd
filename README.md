@@ -916,5 +916,18 @@ let votingAge = minimumAgeSpec 18
 
 votingAge |> subsumes drivingAge |> Option.isSome
 ```
+Here is how to enforce the design and avoid casting operation. That way no need of composite and extra code to downcast spec nor overloading.
+
+
+#### Carve off Subdomains
+"You don’t have to tackle the whole design at once. Pick away at it. At first you may see a part of the model that is a specialized math and separate that. Maybe you pull error handling into a framework"
+This is what "Railway oriented programming is for" : https://fsharpforfunandprofit.com/rop/
+
+#### Draw on Established Formalisms, When You Can
+"Many business applications involve accounting, for example. Accounting has a well-developed set of ENTITIES and rules that make for an easy adaptation to a deep model and a supple design.  
+There are many such formalized conceptual frameworks, but my personal favorite is specialized math. Many domains have math in them somewhere. Look for it. Dig it out. Specialized math is clean, combinable by clear rules, and people find it easy to understand. One that I’ve used in the past is the “Shares Math” example that ends this chapter. "
+Then FP, is math logic for devs..
+
+### Applying Analysis Patterns 
 
 
