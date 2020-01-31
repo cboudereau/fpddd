@@ -470,7 +470,7 @@ type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 module Container = 
     let remainingSpace container = container.Capacity - (container.Contents |> List.sumBy (fun x -> x.Size))
 
-    module Specitfications = 
+    module Specifications = 
         //Container spectification spec combinator (kleisli one promoted to AND) : rule f AND rule g
         let (<&>) f g : ContainerSpecification = fun drum container -> f drum container |> Option.bind (g drum)
         let validate : ContainerSpecification = 
@@ -498,7 +498,7 @@ module Container =
             checkSpaceSpec <&> checkBiologicalSpec <&> checkTNTSpec <&> checkAmmoniaSpec
 
     let tryAdd : AddDrum = fun drum container -> 
-        Specitfications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
+        Specifications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
     let pack : Pack = fun drums containers -> 
         let packContainer container drums = 
