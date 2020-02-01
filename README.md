@@ -219,7 +219,7 @@ and RoomAvailability =
 and Planning = Planning of Map<(Room * Rate), RoomQuantity>
 //Ubiquituous Language : avoid primitive obsession in favour of domain word.
 and RoomQuantity = 
-    | RoomQuantity of intùm!
+    | RoomQuantity of integer
     with 
         //Arithmetic operations inside the domain
         static member (-) (RoomQuantity x, RoomQuantity y) = RoomQuantity (x - y)  
