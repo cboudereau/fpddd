@@ -928,6 +928,17 @@ This is what "Railway oriented programming is for" : https://fsharpforfunandprof
 There are many such formalized conceptual frameworks, but my personal favorite is specialized math. Many domains have math in them somewhere. Look for it. Dig it out. Specialized math is clean, combinable by clear rules, and people find it easy to understand. One that I’ve used in the past is the “Shares Math” example that ends this chapter. "
 Then FP, is math logic for devs..
 
+#### Example Integrating the Patterns: Shares Math 
+Maths are basically SIDE-EFFECT-FREE FUNCtIONS over VALUE OBJECTS. Those functions are CLOSURE OF OPERATION and if the VALUE OBJECT as a natural zero, it is directly a monoid in functional programming.
+
+```fsharp
+type Amount = Amount of decimal
+type SharePie = SharePie of Amount with
+    static member (-) (SharePie (Amount x), (SharePie (Amount y))) = SharePie (Amount (x - y))
+        
+SharePie (Amount 100m) - SharePie (Amount 50m) = SharePie (Amount (50m))
+```
+
 ### Applying Analysis Patterns 
 ### Relating Design Patterns to the Model
 
